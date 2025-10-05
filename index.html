@@ -10,18 +10,36 @@ canvas { background: #101010; display: block; margin: 20px auto; border: 2px sol
     <title>ed-roll</title>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <video id="myVideo" src="edroll.mp4" autoplay muted loop style="display:none;"></video>
+    <canvas id="myCanvas"></canvas>
 </body>
 <script>
-  const canvas = document.getElementById("gameCanvas")
-  const ctx = canvas.getContext('2d');
+    const video = document.getElementById('myVideo');
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
 
-  let newImg = new Image();
-  newImg.src= './edroll.gif'
+let animationFrameId;
 
-  newImg.onload = function() {
-    ctx.drawImage(newImg, 400, 200, 80, 80);
-  }
+// 1. 비디오 메타데이터가 로드되면 캔버스 크기를 설정합니다.
+video.addEventListener('loadedmetadata', function() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+});
+
+// 2. 비디오의 현재 프레임을 캔버스에 그리는 함수
+function drawFrame() {
+    // 캔버스를 지우고 현재 비디오 프레임을 그립니다.
+    // drawImage(source, dx, dy, dWidth, dHeight)
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // 다음 프레임을 위해 함수를 다시 호출합니다.
+    animationFrameId = requestAnimationFrame(drawFrame);
+}
+
+// 3. 비디오 재생 시작 시 그리기 루프 시작
+video.addEventListener('play', function() {
+    drawFrame();
+})
   
 </script>
 </html>
