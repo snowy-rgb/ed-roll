@@ -16,8 +16,12 @@ canvas { background: #101010; display: block; margin: 20px auto; border: 2px sol
   const canvas = document.getElementById("gameCanvas")
   const ctx = canvas.getContext('2d');
 
-  ctx.drawImage(./edroll.gif, 400, 200, 80, 80);
+  let newImg = new Image();
+  newImg.src= './edroll.gif'
 
+  newImg.onload = function() {
+    ctx.drawImage(newImg, 400, 200, 80, 80);
+  }
   
 </script>
 </html>
