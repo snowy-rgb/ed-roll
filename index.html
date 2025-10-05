@@ -11,56 +11,41 @@
 <body>
 <canvas id="gameCanvas" width="800" height="400"></canvas>
 
+<video id="ballVideo" src="edroll.mp4" preload="auto" loop muted playsinline></video>
+
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// 공 스프라이트 이미지
-const sprite = new Image();
-sprite.src = "edroll.mp4";
-
-// 스프라이트 시트 정보
-const frameWidth = 128;     // 각 프레임 너비
-const frameHeight = 128;    // 각 프레임 높이
-const totalFrames = 96;     // 전체 프레임 수
-let currentFrame = 0;
+const video = document.getElementById("ballVideo");
+video.loop = true;
+video.muted = true;
+video.play();          // 자동 재생 (muted와 playsinline이 있어야 모바일에서 작동)
 
 // 공 위치
 let ballX = 100;
-let ballY = 300;
-let speed = 3;              // 공 이동 속도(px/frame)
+let ballY = 250;
+let speed = 2;
 
-// 시간 제어
-let lastTime = 0;
-const fps = 24;             // 모션 FPS
-const frameDuration = 1000 / fps; // 한 프레임 시간(ms)
+// 게임 루프
+function gameLoop() {
+    // 이동
+    ballX += speed;
+    if (ballX > canvas.width) ballX = -150; // 화면 끝에서 다시 등장
 
-function gameLoop(timestamp) {
-    if (!lastTime) lastTime = timestamp;
-    const delta = timestamp - lastTime;
-
-    // 프레임 변경
-    if (delta >= frameDuration) {
-        currentFrame = (currentFrame + 1) % totalFrames;
-        ballX += speed;
-        lastTime = timestamp;
-    }
-
-    // 화면 지우기
+    // 배경 지우기
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // 공 그리기
-    const sx = (currentFrame % 12) * frameWidth;
-    const sy = Math.floor(currentFrame / 12) * frameHeight;
-    ctx.drawImage(sprite, sx, sy, frameWidth, frameHeight, ballX, ballY, 128,128);
+    // 공(비디오 프레임) 그리기
+    ctx.drawImage(video, ballX, ballY, 150,150);
 
-    // 루프
     requestAnimationFrame(gameLoop);
 }
 
-sprite.onload = () => {
+// 비디오가 재생 준비가 끝나면 루프 시작
+video.addEventListener("canplay", () => {
     requestAnimationFrame(gameLoop);
-};
+});
 </script>
 </body>
 </html>
